@@ -1,0 +1,17 @@
+# Ignorar ambiente virtual
+venv/
+env/
+.env
+
+# Ignorar arquivos compilados do Python
+__pycache__/
+*.pyc
+
+# Ignorar arquivos de sistema/IDE
+.DS_Store
+.vscode/
+
+# Ignorar as imagens de teste (Opcional - se quiser subir as imagens, remova esta linha)
+*.png
+*.jpg
+!exemplo_nota.png  # (Opcional) Mantém apenas esta imagem como exemplo, se ela existir
