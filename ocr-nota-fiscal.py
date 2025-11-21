@@ -9,16 +9,12 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 # --- Configuração dos arquivos ---
 # Use o nome da sua imagem CORTADA
-img_original_path = 'bianotafiscal.png' # <- Mude para o nome da sua imagem CORTADA
-img_saida_path = 'resultado_final_cortado.png'
+img_original_path = '.png' # <- Mude para o nome da sua imagem CORTADA
+img_saida_path = '.png'
 
 
 def extrair_tabela_de_dados(img_para_tesseract):
-    """
-    Usa 'image_to_data' para extrair o layout e montar a tabela de itens.
-    Esta versão implementa a lógica de "capturar tudo" (botar a mais),
-    sem exigir um preço no final da linha.
-    """
+    
     print("\nIniciando extração de dados com image_to_data...")
     
     config_tesseract = '-l por --psm 4' 
@@ -39,7 +35,7 @@ def extrair_tabela_de_dados(img_para_tesseract):
                 linhas[key] = []
             linhas[key].append((palavra, posicao_left))
 
-    # --- Bloco de Debug (Mantido) ---
+    
     print("\n" + "="*30)
     print("   DEBUG: LINHAS BRUTAS DO TESSERACT")
     print("="*30)
@@ -51,7 +47,7 @@ def extrair_tabela_de_dados(img_para_tesseract):
         linhas_brutas_para_processar.append(palavras)
         print(f"Linha {key[-1]}: {' '.join(palavras)}")
     print("="*30 + "\n")
-    # --- Fim do Debug ---
+    
 
     # --- Processar as linhas ---
     itens_encontrados = []
@@ -103,7 +99,7 @@ def extrair_tabela_de_dados(img_para_tesseract):
 
         descricao_limpa = " ".join(palavras_do_nome)
         
-        # Adiciona à lista (sem mais filtros severos)
+        # Adiciona à lista 
         if descricao_limpa:
             itens_encontrados.append({
                 'Produto': descricao_limpa.strip(),
@@ -119,13 +115,7 @@ def extrair_tabela_de_dados(img_para_tesseract):
     return df
 
 def pipeline_corte_manual(caminho_imagem_cortada, caminho_imagem_saida):
-    """
-    Pipeline simplificado que assume que a imagem já foi cortada
-    manualmente pelo usuário.
-    
-    Esta versão usa Otsu (para delimitar) e uma DILATAÇÃO VERTICAL
-    (para engrossar o texto fino sem juntar as letras).
-    """
+  
     
     # 1. Carregar a imagem (já cortada)
     img_cortada = cv2.imread(caminho_imagem_cortada)
@@ -153,7 +143,7 @@ def pipeline_corte_manual(caminho_imagem_cortada, caminho_imagem_saida):
     )
     print(f"Binarização de Otsu aplicada. Limiar encontrado: {ret}")
 
-    # --- 6. NOVO PASSO: Dilatação Vertical (para "engrossar" sem "juntar") ---
+    #  6.  Dilatação Vertical (para "engrossar" sem "juntar")
     
     # Inverte a imagem (Otsu nos dá texto preto 0, fundo branco 255)
     # Dilate funciona em pixels brancos.
@@ -169,7 +159,7 @@ def pipeline_corte_manual(caminho_imagem_cortada, caminho_imagem_saida):
     img_final_para_tesseract = cv2.bitwise_not(img_dilatada)
     
     print("Dilatação vertical aplicada para 'engrossar' o texto.")
-    # --- Fim do Novo Passo ---
+  
     
     # Salva a imagem final que o Tesseract vai ler
     cv2.imwrite(caminho_imagem_saida, img_final_para_tesseract)
@@ -196,5 +186,5 @@ def pipeline_corte_manual(caminho_imagem_cortada, caminho_imagem_saida):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 if __name__ == "__main__":
-    # Certifique-se de ter o pandas instalado: pip install pandas openpyxl
+    
     pipeline_corte_manual(img_original_path, img_saida_path)
